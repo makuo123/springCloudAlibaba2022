@@ -1,0 +1,67 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: heartfelt-wish-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.65.129:8848
+        # 这里面的nacos地址是你自己的nacos-server的地址
+        username: nacos
+        password: 123456
+        #namespace: 1a94f7a2-64e5-4b6b-9563-95d0a84887b7
+        name: heartfelt_wish_gateway
+          # 主配置 group-id
+        group: DEFAULT_GROUP
+    gateway:
+      routes:
+        - id: heartfelt-wish-user-route
+          uri: lb://heartfelt-wish-user
+          order: 10000
+          predicates:
+            - Path=/user/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 3
+                key-resolver: "#{@ipKeyResolver}"
+        - id: heartfelt-wish-biz-route
+          uri: lb://heartfelt-wish-biz
+          order: 10000
+          predicates:
+            - Path=/biz/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 3
+                key-resolver: "#{@ipKeyResolver}"
+    sentinel:
+      transport:
+        dashboard: 192.168.65.129:8858
+        port: 8719
+        client-ip: 192.168.1.197
+      enabled: true
+  redis:
+    database: ${REDIS_DATABASE:0}
+    host: ${REDIS_HOST:192.168.65.129}
+    port: ${REDIS_PORT:6379}
+    password: #${REDIS_PASSWORD:123456}
+    lettuce:
+      pool:
+        max-active: 200 #连接池最大连接数（使用负值表示没有限制）
+feign:
+  sentinel:
+    enabled: true
+  #hystrix:
+    #enabled: true
+server:
+  port: 7081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: heartfelt-wish-user
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.65.129:8848
+        # 这里面的nacos地址是你自己的nacos-server的地址
+        username: nacos
+        password: 123456
+        #namespace: 1a94f7a2-64e5-4b6b-9563-95d0a84887b7
+        name: heartfelt-wish-user
+          # 主配置 group-id
+        group: DEFAULT_GROUP
+
+server:
+  port: 7082
+  #servlet:
+    #context-path: /heartfelt-wish-user
