@@ -1,0 +1,46 @@
+wish:
+  nacos:
+    ip: ${NACOS_IP:@nacos.ip@}
+    port: ${NACOS_PORT:@nacos.port@}
+    namespace: ${NACOS_NAMESPACE:@nacos.namespace@}
+    username: ${NACOS_USERNAME:@nacos.username@}
+    password: ${NACOS_PASSWORD:@nacos.password@}
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: heartfelt-wish-biz
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${wish.nacos.ip}:${wish.nacos.port}
+        # 这里面的nacos地址是你自己的nacos-server的地址
+        username: ${wish.nacos.username}
+        password: ${wish.nacos.password}
+        #namespace: 1a94f7a2-64e5-4b6b-9563-95d0a84887b7
+        name: heartfelt-wish-biz
+          # 主配置 group-id
+        group: DEFAULT_GROUP
+      config:
+        server-addr: ${wish.nacos.ip}:${wish.nacos.port}
+        username: ${wish.nacos.username}
+        password: ${wish.nacos.password}
+        namespace: ${wish.nacos.namespace}
+        group: DEFAULT_GROUP
+        file-extension: yaml
+        enabled: true
+        shared-configs:
+          - dataId: heartfelt-wish_common.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+
+
+#开启断路器回调功能
+feign:
+  sentinel:
+    enabled: true
+
+server:
+  port: 7083
+
